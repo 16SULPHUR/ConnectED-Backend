@@ -4,7 +4,11 @@ const session = require("express-session")
 import axios from 'axios';
 import qs from 'qs';
 require('dotenv').config();
+import { CustomRequest } from "../types";
 
+import authRouter from './routes/auth';
+import postRouter from './routes/posts';
+import prisma from './utils/prisma';
 
 const app = express();
 
@@ -20,29 +24,12 @@ app.use(
   })
 );
 
+app.use('/api/auth', authRouter);
+app.use('/api/', postRouter);
 
-
-import { userRoute } from './routes/user'
-
-app.use('/user', userRoute);
-
-function isLoggedIn(req: any, res: any, next: any) {
-  if (req.isAuthenticated())
-    return next();
-  res.redirect('/');
-}
-
-
-
-import { CustomRequest } from "../types";
-app.get('/profile', isLoggedIn, function (req: CustomRequest, res) {
-  console.log(req?.user)
-  res.send("HII")
-});
-
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('<a href="/auth/google">SIGNUP</a>');
+process.on('SIGTERM', async () => {
+  await prisma.$disconnect();
+  process.exit();
 });
 
 const PORT = process.env.PORT || 5000;

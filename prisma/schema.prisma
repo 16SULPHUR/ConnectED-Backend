@@ -13,9 +13,46 @@ datasource db {
   url      = env("DB_URL")
 }
 
-model Users {
-  userId    String @id @unique @default(uuid())
-  email String @unique
-  name  String
-  profile    String?
+enum Role {
+  STUDENT
+  ALUMINI
+  ADMIN
 }
+
+model Users {
+  userId         String   @id @unique @default(uuid())
+  instituteEmail String   @unique
+  personalEmail  String   @unique
+  password       String   
+  name           String
+  profile        String?
+  dob            DateTime
+  graduationYear DateTime
+  admissionYear  DateTime
+  role           String
+  occupation     String?
+  socialLinks    String[]
+}
+
+model Post {
+  id          String    @id @unique @default(uuid())
+  content     String
+  imageUrls   String[]
+  authorId    String
+  likes       Int
+  // comments    Comment[]
+  tags        String[] 
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?  @updatedAt
+}
+
+// model Comment {
+//   id        String   @id @unique @default(uuid())
+//   content   String
+//   author    String
+//   authorId  String
+//   post      Post     @relation(fields: [postId], references: [id])
+//   postId    String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+// }
