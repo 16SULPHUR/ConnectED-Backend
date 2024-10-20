@@ -20,7 +20,7 @@ function getUser(req, res) {
         const userId = ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) || "";
         const user = yield prisma_1.default.users.findFirst({
             where: {
-                id: userId
+                userId: userId
             }
         });
         res.json({ user: user });

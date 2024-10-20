@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.findOrCreateUser = findOrCreateUser;
 const prisma_1 = __importDefault(require("../../utils/prisma"));
 const createJWT_1 = __importDefault(require("../../utils/createJWT"));
+const crypto_1 = require("crypto");
 function findOrCreateUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.user) {
@@ -22,23 +23,23 @@ function findOrCreateUser(req, res) {
             try {
                 const existingUser = yield prisma_1.default.users.findFirst({
                     where: {
-                        id: user.sub
+                        userId: user.sub
                     }
                 });
                 if (!existingUser) {
                     const newUser = yield prisma_1.default.users.create({
                         data: {
-                            id: user.sub,
+                            userId: (0, crypto_1.randomUUID)(),
                             email: user.email,
                             name: user.name,
                             dp: user.picture,
                             sub: user.sub
                         },
                     });
-                    const jwt = (0, createJWT_1.default)(newUser.id);
+                    const jwt = (0, createJWT_1.default)(newUser.userId);
                     return res.redirect(`${process.env.FRONTEND_REDIRECT_URL_FOR_SIGNIN}/?token=${jwt}`);
                 }
-                const jwt = (0, createJWT_1.default)(existingUser.id);
+                const jwt = (0, createJWT_1.default)(existingUser.userId);
                 return res.redirect(`${process.env.FRONTEND_REDIRECT_URL_FOR_SIGNIN}/?token=${jwt}`);
             }
             catch (error) {

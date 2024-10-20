@@ -9,4 +9,4 @@ const auth_1 = __importDefault(require("../middlewares/auth"));
 const express = require("express");
 const router = express.Router();
 exports.userRoute = router;
-router.get('/user', auth_1.default, getUser_1.default);
+router.get('/', auth_1.default, getUser_1.default);
